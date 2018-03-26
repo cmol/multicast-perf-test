@@ -23,6 +23,7 @@ parser = OptionParser.new do|opts|
 
 	opts.on('-p', '--packet length', 'Packet Length (bytes)') do |pkg_len|
 		options[:pkg_length] = pkg_len.to_f * 8;
+    options[:pkg_byte_size] = pkg_len.to_i
 	end
 
 	opts.on('-b', '--bitrate rate', 'Bitrate (kilobit per second)') do |bitrate|
@@ -72,13 +73,13 @@ wifi_socket.setsockopt(
   [`cat /sys/class/net/#{options[:wifi]}/ifindex`.chomp.to_i].pack('i')
 )
 
-pkg_length = options[:pkg_length]
+pkg_length = options[:pkg_byte_size]
 
 # Begin sending loop
 num_sends.to_i.times do
   next_round = Time.now + interval
   wifi_socket.send("1" * pkg_length, 0, WIFI_MULTICAST_ADDR, PORT)
   eth_socket.send("1" * pkg_length, 0, ETH_MULTICAST_ADDR, PORT)
-  slp_time = next_round - Time.now
+#  slp_time = next_round - Time.now
   sleep(next_round - Time.now)
 end
