@@ -11,7 +11,7 @@ begin
   socket = UDPSocket.new(Socket::AF_INET6)
   socket.setsockopt(Socket::IPPROTO_IPV6, Socket::IPV6_MULTICAST_HOPS, [1].pack('i'))
   # cat /sys/class/net/[ifname]/ifindex for index number. Make something smarter
-  socket.setsockopt(Socket::IPPROTO_IPV6, Socket::IPV6_MULTICAST_IF, [5].pack('i'))
+  socket.setsockopt(Socket::IPPROTO_IPV6, Socket::IPV6_MULTICAST_IF, [2].pack('i'))
   #socket.setsockopt(Socket::SOL_SOCKET, Socket::SO_BINDTODEVICE, "enx00e04c68009e"+'\0')
   start = Time.now
   10000.times do
