@@ -1,7 +1,7 @@
 require 'socket'
 require 'ipaddr'
 #MULTICAST_ADDR = "224.0.0.100"
-MULTICAST_ADDR = "ff22::100"
+MULTICAST_ADDR = "ff02::100"
 SOURCE_ADDR    = "fd00::1"
 #MULTICAST_ADDR = "10.16.160.1"
 PORT= 5000

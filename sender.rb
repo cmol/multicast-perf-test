@@ -4,9 +4,9 @@ require 'socket'
 require 'ipaddr'
 require 'optparse'
 
-ETH_MULTICAST_ADDR = "ff22::100"
+ETH_MULTICAST_ADDR = "ff02::100"
 ETH_SOURCE_ADDR    = "fd00::1"
-WIFI_MULTICAST_ADDR = "ff22::200"
+WIFI_MULTICAST_ADDR = "ff02::200"
 WIFI_SOURCE_ADDR    = "fd01::1"
 PORT               = 5000
 TEST_TIME          = 60.0
@@ -80,5 +80,5 @@ num_sends.to_i.times do
   wifi_socket.send("1" * pkg_length, 0, WIFI_MULTICAST_ADDR, PORT)
   eth_socket.send("1" * pkg_length, 0, ETH_MULTICAST_ADDR, PORT)
   slp_time = next_round - Time.now
-  sleep(slp_time - Time.now)
+  sleep(next_round - Time.now)
 end
