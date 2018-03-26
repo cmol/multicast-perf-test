@@ -2,10 +2,10 @@ require 'socket'
 require 'ipaddr'
 #MULTICAST_ADDR = "225.4.5.6"
 MULTICAST_ADDR = "224.0.0.100"
-SOURCE_ADDR    = "172.16.0.1"
+SOURCE_ADDR    = "10.7.10.66"
 #MULTICAST_ADDR = "10.16.160.1"
 PORT= 5000
-1.times do
+10.times do
 begin
   socket = UDPSocket.open
   socket.setsockopt(Socket::IPPROTO_IP, Socket::IP_MULTICAST_LOOP, [1].pack("i"))
