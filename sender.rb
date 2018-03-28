@@ -4,12 +4,12 @@ require 'socket'
 require 'ipaddr'
 require 'optparse'
 
-ETH_MULTICAST_ADDR = "ff02::100"
-ETH_SOURCE_ADDR    = "fd00::1"
+ETH_MULTICAST_ADDR  = "ff02::100"
+ETH_SOURCE_ADDR     = "fd00::1"
 WIFI_MULTICAST_ADDR = "ff02::200"
 WIFI_SOURCE_ADDR    = "fd01::1"
-PORT               = 5000
-TEST_TIME          = 60.0
+PORT                = 5000
+TEST_TIME           = 60.0
 
 options = {
   pkg_length: nil,
