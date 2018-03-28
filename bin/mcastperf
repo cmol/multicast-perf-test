@@ -2,5 +2,82 @@
 
 require "bundler/setup"
 require "mcast_perf_test"
+require 'optparse'
 
+options = {
+  ethernet: nil,
+  wifi: nil,
+  samples: 200_000,
+  pkg_length: nil,
+  bitrate: nil,
+}
+
+recv_parser = OptionParser.new do|opts|
+  opts.banner = "Usage: #{__FILE__} receiver [options]"
+
+  opts.on('-e', '--ethernet interface', 'Ethernet interface') do |ethernet|
+    options[:ethernet] = ethernet;
+  end
+  opts.on('-w', '--wifi interface', 'WiFi interface') do |wifi|
+    options[:wifi] = wifi;
+  end
+  opts.on('-s', '--samples number', 'Number of samples') do |samples|
+    options[:samples] = samples.to_i;
+  end
+
+  opts.on('-h', '--help', 'Displays Help') do
+    puts opts
+    exit
+  end
+
+end
+
+send_parser = OptionParser.new do|opts|
+  opts.banner = "Usage: #{__FILE__} sender [options]"
+
+  opts.on('-p', '--packet length', 'Packet Length (bytes)') do |pkg_len|
+    options[:pkg_length] = pkg_len.to_f * 8;
+    options[:pkg_byte_size] = pkg_len.to_i
+  end
+
+  opts.on('-b', '--bitrate rate', 'Bitrate (kilobit per second)') do |bitrate|
+    options[:bitrate] = bitrate.to_f * 1000;
+  end
+
+  opts.on('-e', '--ethernet interface', 'Ethernet interface') do |ethernet|
+    options[:ethernet] = ethernet;
+  end
+  opts.on('-w', '--wifi interface', 'WiFi interface') do |wifi|
+    options[:wifi] = wifi;
+  end
+
+  opts.on('-h', '--help', 'Displays Help') do
+    puts opts
+    exit
+  end
+
+end
+
+if ARGV[0] == "sender"
+  ARGV.shift
+  if ARGV.length < 4
+    puts send_parser
+    exit 1
+  end
+  send_parser.parse!
+  send = McastPerfTest::Sender.new(options)
+  send.run
+elsif ARGV[0] == "receiver"
+  ARGV.shift
+  if ARGV.length < 2
+    puts send_parser
+    exit 1
+  end
+  recv_parser.parse!
+  recv = McastPerfTest::Receiver.new(options)
+  recv.run
+else
+  puts send_parser
+  puts recv_parser
+end
 
