@@ -8,7 +8,7 @@ ETH_MULTICAST_ADDR  = "ff02::100"
 ETH_SOURCE_ADDR     = "fd00::1"
 WIFI_MULTICAST_ADDR = "ff02::200"
 WIFI_SOURCE_ADDR    = "fd01::1"
-PORT                = 5000
+ADM_PORT            = 5000
 ETH_PORT            = 5001
 WIFI_PORT           = 5002
 ETH_FILE            = "/tmp/eth_samples"
@@ -94,7 +94,7 @@ end
 samples = nil
 
 # Ready a TCP socket and wait for master to connect
-server = TCPServer.new("::", PORT)
+server = TCPServer.new("::", ADM_PORT)
 connection = server.accept
 
 # Ask children to terminate and write out their data
