@@ -1,6 +1,4 @@
 require "mcast_perf_test/version"
-require "mcast_perf_test/sender"
-require "mcast_perf_test/receiver"
 
 module McastPerfTest
   module Constants
@@ -21,3 +19,6 @@ module McastPerfTest
     end
   end
 end
+
+require "mcast_perf_test/sender"
+require "mcast_perf_test/receiver"
