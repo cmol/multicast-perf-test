@@ -19,28 +19,28 @@ options = {
 }
 
 parser = OptionParser.new do|opts|
-	opts.banner = "Usage: #{__FILE__} [options]"
+  opts.banner = "Usage: #{__FILE__} [options]"
 
-	opts.on('-p', '--packet length', 'Packet Length (bytes)') do |pkg_len|
-		options[:pkg_length] = pkg_len.to_f * 8;
+  opts.on('-p', '--packet length', 'Packet Length (bytes)') do |pkg_len|
+    options[:pkg_length] = pkg_len.to_f * 8;
     options[:pkg_byte_size] = pkg_len.to_i
-	end
+  end
 
-	opts.on('-b', '--bitrate rate', 'Bitrate (kilobit per second)') do |bitrate|
-		options[:bitrate] = bitrate.to_f * 1000;
-	end
+  opts.on('-b', '--bitrate rate', 'Bitrate (kilobit per second)') do |bitrate|
+    options[:bitrate] = bitrate.to_f * 1000;
+  end
 
-	opts.on('-e', '--ethernet interface', 'Ethernet interface') do |ethernet|
-		options[:ethernet] = ethernet;
-	end
-	opts.on('-w', '--wifi interface', 'WiFi interface') do |wifi|
-		options[:wifi] = wifi;
-	end
+  opts.on('-e', '--ethernet interface', 'Ethernet interface') do |ethernet|
+    options[:ethernet] = ethernet;
+  end
+  opts.on('-w', '--wifi interface', 'WiFi interface') do |wifi|
+    options[:wifi] = wifi;
+  end
 
-	opts.on('-h', '--help', 'Displays Help') do
-		puts opts
-		exit
-	end
+  opts.on('-h', '--help', 'Displays Help') do
+    puts opts
+    exit
+  end
 
   if ARGV.length < 4
     puts opts
@@ -66,7 +66,7 @@ eth_socket.setsockopt(
 
 wifi_socket = UDPSocket.new(Socket::AF_INET6)
 wifi_socket.setsockopt(Socket::IPPROTO_IPV6,
-                      Socket::IPV6_MULTICAST_HOPS, [1].pack('i'))
+                       Socket::IPV6_MULTICAST_HOPS, [1].pack('i'))
 wifi_socket.setsockopt(
   Socket::IPPROTO_IPV6,
   Socket::IPV6_MULTICAST_IF,
