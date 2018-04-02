@@ -11,6 +11,7 @@ module McastPerfTest
     WIFI_PORT           = 5002
     ETH_FILE            = "/tmp/eth_samples"
     WIFI_FILE           = "/tmp/wifi_samples"
+    STARTUP_DELAY       = 1.0                 # Defined in seconds
   end
 
   module Helpers
