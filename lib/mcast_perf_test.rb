@@ -23,3 +23,4 @@ end
 
 require "mcast_perf_test/sender"
 require "mcast_perf_test/receiver"
+require "mcast_perf_test/collector"
