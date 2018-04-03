@@ -37,6 +37,39 @@ recv_parser = OptionParser.new do|opts|
 
 end
 
+experiment_parser = OptionParser.new do|opts|
+  opts.banner = "Usage: #{__FILE__} experiment [options]"
+
+  opts.on('-e', '--ethernet interface', 'Ethernet interface') do |ethernet|
+    options[:ethernet] = ethernet
+  end
+  opts.on('-w', '--wifi interface', 'WiFi interface') do |wifi|
+    options[:wifi] = wifi
+  end
+  opts.on('-n', '--name name', 'Experiment name') do |name|
+    options[:name] = name
+  end
+  opts.on('-c', '--clients fd00::1,..', 'IPv6 address of clients') do |clients|
+    options[:clients] = clients.split(",")
+  end
+  opts.on('-b', '--bitrates start,stop,step',
+          'Bitrates for experiment (kilobit pr second)') do |bitrates|
+    start, stop, step = bitrates.split(",").map{|e| e.to_i * 1024}
+    options[:bit_range] = (start..stop).step(step).to_a
+  end
+  opts.on('-p', '--packages start,stop,step',
+          'Packet lengths for experiment (bytes)') do |lengths|
+    start, stop, step = lengths.split(",").map(&:to_i)
+    options[:pkg_range] = (start..stop).step(step).to_a
+  end
+
+  opts.on('-h', '--help', 'Displays Help') do
+    puts opts
+    exit
+  end
+
+end
+
 send_parser = OptionParser.new do|opts|
   opts.banner = "Usage: #{__FILE__} sender [options]"
 
@@ -80,8 +113,22 @@ elsif ARGV[0] == "receiver"
   recv_parser.parse!
   recv = McastPerfTest::Receiver.new(options)
   recv.run
+elsif ARGV[0] == "experiment"
+  ARGV.shift
+  if ARGV.length < 6
+    puts experiment_parser
+    exit 1
+  end
+  experiment_parser.parse!
+  McastPerfTest.experiment(options[:name],
+                           options[:clients],
+                           options[:bit_range],
+                           options[:pkg_range],
+                           options[:wifi],
+                           options[:ethernet])
 else
   puts send_parser
   puts recv_parser
+  puts experiment_parser
 end
 
