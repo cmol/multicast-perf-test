@@ -10,6 +10,11 @@ options = {
   samples: 200_000,
   pkg_length: nil,
   bitrate: nil,
+  loop: false,
+  clients: nil,
+  bit_range: nil,
+  pkg_range: nil,
+  name: nil
 }
 
 recv_parser = OptionParser.new do|opts|
