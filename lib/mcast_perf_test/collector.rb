@@ -47,7 +47,7 @@ module McastPerfTest
 
         # Write samples
         formatted.each_with_index do | sample,idx |
-          file.write("#{idx},#{sample.join(',')}")
+          file.write("#{idx},#{sample.join(',')}\n")
         end
       end
     end
