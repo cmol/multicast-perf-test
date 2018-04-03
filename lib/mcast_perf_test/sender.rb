@@ -12,7 +12,8 @@ module McastPerfTest
       #              (options[:bitrate].to_f / (options[:pkg_length].to_f * 8)
       interval    = (options[:pkg_length] * 8).to_f / options[:bitrate].to_f
       @pkg_length = options[:pkg_length] / 4
-      @sends      = (0..(60+interval)).step(interval).to_a.shift
+      @sends      = (0..(60+interval)).step(interval).to_a
+      @sends.shift
       @wifi       = options[:wifi]
       @ethernet   = options[:ethernet]
     end
@@ -25,7 +26,7 @@ module McastPerfTest
       socket.setsockopt(
         Socket::IPPROTO_IPV6,
         Socket::IPV6_MULTICAST_IF,
-        [interface_index(interface)].pack('i')
+        [interface_idx(interface)].pack('i')
       )
 
       # Wait until start time to make sure all processes are ready
@@ -53,10 +54,10 @@ module McastPerfTest
 
       # Spawn two child processes, responsible for each own interface
       pid_eth = fork do
-        receive_pocess(ETH_MULTICAST_ADDR, @ethernet, ETH_PORT, start_time)
+        send_pocess(ETH_MULTICAST_ADDR, @ethernet, ETH_PORT, start_time)
       end
       pid_wifi = fork do
-        receive_pocess(WIFI_MULTICAST_ADDR, @wifi, WIFI_PORT, start_time)
+        send_pocess(WIFI_MULTICAST_ADDR, @wifi, WIFI_PORT, start_time)
       end
 
       # Wait for them to finish
