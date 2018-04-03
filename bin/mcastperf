@@ -70,6 +70,23 @@ experiment_parser = OptionParser.new do|opts|
 
 end
 
+collector_parser = OptionParser.new do|opts|
+  opts.banner = "Usage: #{__FILE__} collector [options]"
+
+  opts.on('-n', '--name name', 'Experiment name') do |name|
+    options[:name] = name
+  end
+  opts.on('-c', '--clients fd00::1,..', 'IPv6 address of clients') do |clients|
+    options[:clients] = clients.split(",")
+  end
+
+  opts.on('-h', '--help', 'Displays Help') do
+    puts opts
+    exit
+  end
+
+end
+
 send_parser = OptionParser.new do|opts|
   opts.banner = "Usage: #{__FILE__} sender [options]"
 
@@ -107,12 +124,21 @@ if ARGV[0] == "sender"
 elsif ARGV[0] == "receiver"
   ARGV.shift
   if ARGV.length < 2
-    puts send_parser
+    puts recv_parser
     exit 1
   end
   recv_parser.parse!
   recv = McastPerfTest::Receiver.new(options)
   recv.run
+elsif ARGV[0] == "collector"
+  ARGV.shift
+  if ARGV.length < 2
+    puts collector_parser
+    exit 1
+  end
+  collector_parser.parse!
+  collector = McastPerfTest::Collector.new(options[:name], options[:clients])
+  collector.run
 elsif ARGV[0] == "experiment"
   ARGV.shift
   if ARGV.length < 6
