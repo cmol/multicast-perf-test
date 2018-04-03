@@ -41,12 +41,11 @@ send_parser = OptionParser.new do|opts|
   opts.banner = "Usage: #{__FILE__} sender [options]"
 
   opts.on('-p', '--packet length', 'Packet Length (bytes)') do |pkg_len|
-    options[:pkg_length] = pkg_len.to_f * 8;
-    options[:pkg_byte_size] = pkg_len.to_i
+    options[:pkg_length] = pkg_len.to_i
   end
 
   opts.on('-b', '--bitrate rate', 'Bitrate (kilobit per second)') do |bitrate|
-    options[:bitrate] = bitrate.to_f * 1000;
+    options[:bitrate] = bitrate.to_f * 1024;
   end
 
   opts.on('-e', '--ethernet interface', 'Ethernet interface') do |ethernet|
