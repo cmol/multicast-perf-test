@@ -23,7 +23,61 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+The gem is split into four tools:
+
+- receiver
+- sender
+- collector
+- experiment
+
+### receiver usage
+```
+Usage: ./bin/mcastperf receiver [options]
+    -e, --ethernet interface         Ethernet interface
+    -w, --wifi interface             WiFi interface
+    -s, --samples number             Number of samples
+    -l, --loop                       Loop (for experiment)
+    -h, --help                       Displays Help
+
+```
+
+The receiver is used to run either a single test, or a multiple of tests on the system. Each client in the multicast network must run the receiver. the receiver will hang, waiting for a connection to collect the data even after the master have finished sending data. If the loop option is used, multiple consecutive runs of the client will be made until interrupted by the system.
+
+### sender
+```
+Usage: ./bin/mcastperf sender [options]
+    -p, --packet length              Packet Length (bytes)
+    -b, --bitrate rate               Bitrate (kilobit per second)
+    -e, --ethernet interface         Ethernet interface
+    -w, --wifi interface             WiFi interface
+    -h, --help                       Displays Help
+```
+
+The sender is responsible for sending packets on the wireless and wired interface simultaneously at the packet rate and size specified.
+
+### collector
+```
+Usage: ./bin/mcastperf collector [options]
+    -n, --name name                  Experiment name
+    -c, --clients fd00::1,..         IPv6 address of clients
+    -h, --help                       Displays Help
+```
+
+The collector should be run after the sender, and will collect data from all the clients. The collector is not limited to running on the same host as the sender, though external coordination or manual handling is needed.
+
+### experiment
+```
+Usage: ./bin/mcastperf experiment [options]
+    -e, --ethernet interface         Ethernet interface
+    -w, --wifi interface             WiFi interface
+    -n, --name name                  Experiment name
+    -c, --clients fd00::1,..         IPv6 address of clients
+    -b, --bitrates start,stop,step   Bitrates for experiment (kilobit pr second)
+    -p, --packages start,stop,step   Packet lengths for experiment (bytes)
+    -h, --help                       Displays Help
+```
+
+The experiment is a combination of the sender and collector. The experiment will iterate over the bitrates and package lengths given, and will collect the data after each run.
 
 ## Development
 
