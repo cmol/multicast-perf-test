@@ -5,16 +5,17 @@ require "mcast_perf_test"
 require 'optparse'
 
 options = {
-  ethernet: nil,
-  wifi: nil,
-  samples: 200_000,
-  pkg_length: nil,
-  bitrate: nil,
-  loop: false,
-  clients: nil,
-  bit_range: nil,
-  pkg_range: nil,
-  name: nil
+  ethernet:     nil,
+  wifi:         nil,
+  samples:      2_000_000,
+  pkg_length:   nil,
+  bitrate:      nil,
+  loop:         false,
+  clients:      nil,
+  bit_range:    nil,
+  pkg_range:    nil,
+  name:         nil,
+  verbose:      false
 }
 
 recv_parser = OptionParser.new do|opts|

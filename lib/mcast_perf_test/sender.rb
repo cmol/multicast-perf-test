@@ -1,5 +1,6 @@
 require 'socket'
 require 'ipaddr'
+require 'tty-progressbar'
 
 module McastPerfTest
   class Sender
@@ -16,6 +17,7 @@ module McastPerfTest
       @sends.shift
       @wifi       = options[:wifi]
       @ethernet   = options[:ethernet]
+      @verbose    = options[:verbose]
     end
 
     def send_pocess(multicast_addr, interface, port, start_time)
@@ -58,6 +60,14 @@ module McastPerfTest
       end
       pid_wifi = fork do
         send_pocess(WIFI_MULTICAST_ADDR, @wifi, WIFI_PORT, start_time)
+      end
+
+      if @verbose
+        bar = TTY::ProgressBar.new("Sending [:bar]", total: 60)
+        60.times do
+          sleep(1)
+          bar.advance(1)
+        end
       end
 
       # Wait for them to finish
