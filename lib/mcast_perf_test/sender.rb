@@ -46,7 +46,7 @@ module McastPerfTest
 
         # Make the index into a 32-bit unsigned int, network byte order
         msg = [idx].pack("I>")
-        socket.send(msg * @pkg_length, 0, WIFI_MULTICAST_ADDR, WIFI_PORT)
+        socket.send(msg * @pkg_length, 0, multicast_addr, port)
       end
     end
 
