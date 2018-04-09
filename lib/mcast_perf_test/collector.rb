@@ -34,8 +34,8 @@ module McastPerfTest
                             Array.new(@collect.keys.length + 1, nil))
 
       # Prepare array for file write
-      @collect.keys.each_with_index do | key, key_idx |
-        @collect[key].each_with_index do | sample, idx |
+      @collected.keys.each_with_index do | key, key_idx |
+        @collected[key].each_with_index do | sample, idx |
           formatted[idx][key_idx] = sample
         end
       end
