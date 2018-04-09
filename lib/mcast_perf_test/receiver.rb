@@ -83,13 +83,12 @@ module McastPerfTest
       # Compare with WIFI and send to master
       File.open(WIFI_FILE).each_line do | line |
         idx,time = line.split(",")
-        idx = idx.to_i
         time = Time.at(time.to_f)
 
         if time.to_i == 0
-          connection.puts [idx,0].pack("L>G")
+          connection.puts [idx,"0"].join(",")
         else
-          connection.puts [idx,(time - samples[idx]).to_f].pack("L>G")
+          connection.puts [idx,(time - samples[idx]).to_f.to_s].join(",")
         end
       end
 

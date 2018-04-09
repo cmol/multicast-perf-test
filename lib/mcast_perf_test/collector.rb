@@ -17,8 +17,8 @@ module McastPerfTest
 
       samples = []
       while line = socket.gets
-        idx, delay = line.unpack("L>G")
-        samples[idx] = delay
+        idx, delay = line.split(",")
+        samples[idx.to_i] = delay.to_f
       end
       socket.close
 
