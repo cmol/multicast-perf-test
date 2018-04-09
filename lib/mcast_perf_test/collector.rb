@@ -31,7 +31,7 @@ module McastPerfTest
 
       # Prepare array dimensions
       formatted = Array.new(@collected.first.last.length,
-                            Array.new(@collect.keys.length + 1, nil))
+                            Array.new(@collected.keys.length + 1, nil))
 
       # Prepare array for file write
       @collected.keys.each_with_index do | key, key_idx |
