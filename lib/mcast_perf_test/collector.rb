@@ -27,7 +27,7 @@ module McastPerfTest
 
     def write_data
       # Prepare header
-      header = "index,#{@collect.keys.map {|key| key.to_s}.join(",")}\n"
+      header = "index,#{@collected.keys.map {|key| key.to_s}.join(",")}\n"
 
       # Prepare array dimensions
       formatted = Array.new(@collected.first.last.length,
