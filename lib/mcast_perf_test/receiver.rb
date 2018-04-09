@@ -19,7 +19,7 @@ module McastPerfTest
       # Set-up and prepare sockets
       socket = UDPSocket.new(Socket::AF_INET6)
       ip     = IPAddr.new(multicast_addr).hton +
-                  [interface_index(interface)].pack('i')
+                  [interface_idx(interface)].pack('i')
       socket.setsockopt(Socket::IPPROTO_IPV6, Socket::IPV6_JOIN_GROUP, ip)
       socket.bind("::", port)
 
