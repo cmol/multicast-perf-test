@@ -55,7 +55,7 @@ module McastPerfTest
     def run
       # Collect data from clients
       @clients.each do | client |
-        @collected[client] = collect
+        @collected[client] = collect(client)
       end
 
       write_data
