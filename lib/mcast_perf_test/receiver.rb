@@ -88,7 +88,7 @@ module McastPerfTest
         if time.to_i == 0
           connection.puts [idx,"0"].join(",")
         else
-          connection.puts [idx,(time - samples[idx]).to_f.to_s].join(",")
+          connection.puts [idx,(time - samples[idx.to_i]).to_f.to_s].join(",")
         end
       end
 
