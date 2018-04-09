@@ -108,6 +108,9 @@ send_parser = OptionParser.new do|opts|
   opts.on('-w', '--wifi interface', 'WiFi interface') do |wifi|
     options[:wifi] = wifi;
   end
+  opts.on('-V', '--verbose', 'Verbose output') do |wifi|
+    options[:verbose] = true;
+  end
 
   opts.on('-h', '--help', 'Displays Help') do
     puts opts
