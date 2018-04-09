@@ -32,7 +32,7 @@ module McastPerfTest
         File.delete(filename) if File.exist?(filename)
         File.open(filename, 'w') do | file |
           samples.each_with_index do | sample,idx |
-            file.write("#{idx},#{sample.tv_sec + sample.tv_usec / 1000000.0}")
+            file.write("#{idx},#{sample.tv_sec + sample.tv_usec / 1000000.0}\n")
           end
         end
 
