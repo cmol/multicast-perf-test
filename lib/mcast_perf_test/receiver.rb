@@ -15,6 +15,7 @@ module McastPerfTest
     def receive_pocess(multicast_addr, filename, interface, port)
       # Prepare samples array
       samples = Array.new(@samples, Time.at(0))
+      last_index = 0
 
       # Set-up and prepare sockets
       socket = UDPSocket.new(Socket::AF_INET6)
@@ -32,6 +33,7 @@ module McastPerfTest
         File.delete(filename) if File.exist?(filename)
         File.open(filename, 'w') do | file |
           samples.each_with_index do | sample,idx |
+            break if idx > last_index
             file.write("#{idx},#{sample.tv_sec + sample.tv_usec / 1000000.0}\n")
           end
         end
@@ -44,7 +46,8 @@ module McastPerfTest
       loop do
         msg, info = socket.recvfrom(1500)
         current = Time.now
-        samples[msg[0..3].unpack("L>").first] = current
+        last_index = msg[0..3].unpack("L>").first
+        samples[last_index] = current
       end
 
     end
