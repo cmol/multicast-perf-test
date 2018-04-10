@@ -2,140 +2,59 @@
 
 require "bundler/setup"
 require "mcast_perf_test"
-require 'optparse'
+require 'slop'
 
-options = {
-  ethernet:     nil,
-  wifi:         nil,
-  samples:      2_000_000,
-  pkg_length:   nil,
-  bitrate:      nil,
-  loop:         false,
-  clients:      nil,
-  bit_range:    nil,
-  pkg_range:    nil,
-  name:         nil,
-  verbose:      false,
-  send_time:    60
-}
-
-recv_parser = OptionParser.new do|opts|
-  opts.banner = "Usage: #{__FILE__} receiver [options]"
-
-  opts.on('-e', '--ethernet interface', 'Ethernet interface') do |ethernet|
-    options[:ethernet] = ethernet;
-  end
-  opts.on('-w', '--wifi interface', 'WiFi interface') do |wifi|
-    options[:wifi] = wifi;
-  end
-  opts.on('-s', '--samples number', 'Number of samples') do |samples|
-    options[:samples] = samples.to_i;
-  end
-  opts.on('-l', '--loop', 'Loop (for experiment)') do |lop|
-    options[:loop] = true;
-  end
-
-  opts.on('-h', '--help', 'Displays Help') do
-    puts opts
-    exit
-  end
-
-end
-
-experiment_parser = OptionParser.new do|opts|
-  opts.banner = "Usage: #{__FILE__} experiment [options]"
-
-  opts.on('-e', '--ethernet interface', 'Ethernet interface') do |ethernet|
-    options[:ethernet] = ethernet
-  end
-  opts.on('-w', '--wifi interface', 'WiFi interface') do |wifi|
-    options[:wifi] = wifi
-  end
-  opts.on('-n', '--name name', 'Experiment name') do |name|
-    options[:name] = name
-  end
-  opts.on('-c', '--clients fd00::1,..', 'IPv6 address of clients') do |clients|
-    options[:clients] = clients.split(",")
-  end
-  opts.on('-b', '--bitrates start,stop,step',
-          'Bitrates for experiment (kilobit pr second)') do |bitrates|
-    start, stop, step = bitrates.split(",").map{|e| e.to_i * 1024}
-    options[:bit_range] = (start..stop).step(step).to_a
-  end
-  opts.on('-p', '--packages start,stop,step',
-          'Packet lengths for experiment (bytes)') do |lengths|
-    start, stop, step = lengths.split(",").map(&:to_i)
-    options[:pkg_range] = (start..stop).step(step).to_a
-  end
-
-  opts.on('-h', '--help', 'Displays Help') do
-    puts opts
-    exit
-  end
-
-end
-
-collector_parser = OptionParser.new do|opts|
-  opts.banner = "Usage: #{__FILE__} collector [options]"
-
-  opts.on('-n', '--name name', 'Experiment name') do |name|
-    options[:name] = name
-  end
-  opts.on('-c', '--clients fd00::1,..', 'IPv6 address of clients') do |clients|
-    options[:clients] = clients.split(",")
-  end
-
-  opts.on('-h', '--help', 'Displays Help') do
-    puts opts
-    exit
-  end
-
-end
-
-send_parser = OptionParser.new do|opts|
-  opts.banner = "Usage: #{__FILE__} sender [options]"
-
-  opts.on('-p', '--packet length', 'Packet Length (bytes)') do |pkg_len|
-    options[:pkg_length] = pkg_len.to_i
-  end
-
-  opts.on('-b', '--bitrate rate', 'Bitrate (kilobit per second)') do |bitrate|
-    options[:bitrate] = bitrate.to_f * 1024;
-  end
-
-  opts.on('-e', '--ethernet interface', 'Ethernet interface') do |ethernet|
-    options[:ethernet] = ethernet;
-  end
-  opts.on('-w', '--wifi interface', 'WiFi interface') do |wifi|
-    options[:wifi] = wifi;
-  end
-  opts.on('-V', '--verbose', 'Verbose output') do |wifi|
-    options[:verbose] = true;
-  end
-
-  opts.on('-h', '--help', 'Displays Help') do
-    puts opts
-    exit
-  end
-
-end
+options = {}
 
 if ARGV[0] == "sender"
   ARGV.shift
-  if ARGV.length < 4
-    puts send_parser
-    exit 1
+  opts = Slop::Options.new
+  opts.banner = "usage: #{__FILE__} sender [options] ..."
+  opts.string "-e", "--ethernet", "ethernet interface", required: true
+  opts.string "-w", "--wifi", "ethernet interface", required: true
+  opts.int "-b", "--bitrate", "bitrate in kb/s (default 200)", default: 200
+  opts.int "-p", "--packet-length", "packet length in bytes (default 100)",
+    default: 100
+  opts.bool "-v", "--verbose", "enable verbose mode", default: false
+  opts.on "-h", "--help" do
+    puts opts
+    exit
   end
-  send_parser.parse!
+
+  begin
+    parser = Slop::Parser.new(opts)
+    options = parser.parse(ARGV).to_hash
+  rescue Slop::MissingRequiredOption
+    puts opts
+    exit
+  end
+
   send = McastPerfTest::Sender.new(options)
   send.run
+
 elsif ARGV[0] == "receiver"
   ARGV.shift
-  if ARGV.length < 2
-    puts recv_parser
-    exit 1
+  opts = Slop::Options.new
+  opts.banner = "usage: #{__FILE__} receiver [options] ..."
+  opts.string "-e", "--ethernet", "ethernet interface", required: true
+  opts.string "-w", "--wifi", "ethernet interface", required: true
+  opts.int "-s", "--samples", "number of samples (default 2M)", default: 2000000
+  opts.array "--files", "a list of files to import"
+  opts.bool "-l", "--loop", "enable loop mode", default: false
+  opts.bool "-v", "--verbose", "enable verbose mode", default: false
+  opts.on "-h", "--help" do
+    puts opts
+    exit
   end
-  recv_parser.parse!
+
+  begin
+    parser = Slop::Parser.new(opts)
+    options = parser.parse(ARGV).to_hash
+  rescue Slop::MissingRequiredOption
+    puts opts
+    exit
+  end
+
   if options[:loop]
     loop do
       recv = McastPerfTest::Receiver.new(options)
@@ -145,28 +64,64 @@ elsif ARGV[0] == "receiver"
     recv = McastPerfTest::Receiver.new(options)
     recv.run
   end
+
 elsif ARGV[0] == "collector"
   ARGV.shift
-  if ARGV.length < 2
-    puts collector_parser
-    exit 1
+  opts = Slop::Options.new
+  opts.banner = "usage: #{__FILE__} collector [options] ..."
+  opts.string "-n", "--name", "name of experiment", required: true
+  opts.array "-c", "--clients", "list of client as fd00::1,...", required: true
+  opts.bool "-v", "--verbose", "enable verbose mode", default: false
+  opts.on "-h", "--help" do
+    puts opts
+    exit
   end
-  collector_parser.parse!
+
+  begin
+    parser = Slop::Parser.new(opts)
+    options = parser.parse(ARGV).to_hash
+  rescue Slop::MissingRequiredOption
+    puts opts
+    exit
+  end
+
   collector = McastPerfTest::Collector.new(options[:name], options[:clients])
   collector.run
+
 elsif ARGV[0] == "experiment"
   ARGV.shift
-  if ARGV.length < 6
-    puts experiment_parser
-    exit 1
+  opts = Slop::Options.new
+  opts.banner = "usage: #{__FILE__} sender [options] ..."
+  opts.string "-e", "--ethernet", "ethernet interface", required: true
+  opts.string "-w", "--wifi", "ethernet interface", required: true
+  opts.string "-n", "--name", "name of experiment", required: true
+  opts.array "-c", "--clients", "list of client as fd00::1,...", required: true
+  opts.array "-b", "--bitrates",
+    "bitrates for experiment in kbps as (start,stop,step)", required: true
+  opts.array "-p", "--packets",
+    "packet lenghts for experiment in bytes as (start,stop,step)",
+    required: true
+  opts.int "-t", "--time", "sending test time (default: 60)", default: 60
+  opts.bool "-v", "--verbose", "enable verbose mode", default: false
+  opts.on "-h", "--help" do
+    puts opts
+    exit
   end
-  experiment_parser.parse!
-  McastPerfTest.experiment(options[:name],
-                           options[:clients],
-                           options[:bit_range],
-                           options[:pkg_range],
-                           options[:wifi],
-                           options[:ethernet])
+
+  begin
+    parser = Slop::Parser.new(opts)
+    options = parser.parse(ARGV).to_hash
+  rescue Slop::MissingRequiredOption
+    puts opts
+    exit
+  end
+
+  start,stop,step = options[:bitrates].map!{|b| b.to_i * 1024}
+  options[:bitrates] = (start..stop).step(step).to_a
+  start,stop,step = options[:packets].map!{|p| p.to_i}
+  options[:packets] = (start..stop).step(step).to_a
+
+  McastPerfTest.experiment(options)
 else
   puts send_parser
   puts recv_parser
