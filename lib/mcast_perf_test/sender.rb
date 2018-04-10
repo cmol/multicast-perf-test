@@ -12,8 +12,8 @@ module McastPerfTest
       #interval    = 1.0 /
       #              (options[:bitrate].to_f / (options[:pkg_length].to_f * 8)
       @send_time  = options[:time]
-      interval    = (options[:pkg_length] * 8).to_f / options[:bitrate].to_f
-      @pkg_length = options[:pkg_length] / 4
+      interval    = (options[:packet_length] * 8).to_f / options[:bitrate].to_f
+      @pkg_length = options[:packet_length] / 4
       @sends      = (0..(@send_time+interval)).step(interval).to_a
       @sends.shift
       @wifi       = options[:wifi]

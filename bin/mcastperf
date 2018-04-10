@@ -15,6 +15,7 @@ if ARGV[0] == "sender"
   opts.int "-b", "--bitrate", "bitrate in kb/s (default 200)", default: 200
   opts.int "-p", "--packet-length", "packet length in bytes (default 100)",
     default: 100
+  opts.int "-t", "--time", "sending test time (default: 60)", default: 60
   opts.bool "-v", "--verbose", "enable verbose mode", default: false
   opts.on "-h", "--help" do
     puts opts
@@ -91,7 +92,7 @@ elsif ARGV[0] == "collector"
 elsif ARGV[0] == "experiment"
   ARGV.shift
   opts = Slop::Options.new
-  opts.banner = "usage: #{__FILE__} sender [options] ..."
+  opts.banner = "usage: #{__FILE__} experiment [options] ..."
   opts.string "-e", "--ethernet", "ethernet interface", required: true
   opts.string "-w", "--wifi", "ethernet interface", required: true
   opts.string "-n", "--name", "name of experiment", required: true
