@@ -15,7 +15,8 @@ options = {
   bit_range:    nil,
   pkg_range:    nil,
   name:         nil,
-  verbose:      false
+  verbose:      false,
+  send_time:    60
 }
 
 recv_parser = OptionParser.new do|opts|
