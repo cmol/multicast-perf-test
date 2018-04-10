@@ -30,15 +30,23 @@ module McastPerfTest
       header = "index,#{@collected.keys.map {|key| key.to_s}.join(",")}\n"
 
       # Prepare array dimensions
-      formatted = Array.new(@collected.first.last.length,
-                            Array.new(@collected.keys.length + 1, nil))
+      #f2 = Array.new(@collected.first.last.length,
+      #                      Array.new(@collected.keys.length, nil))
+      # TODO: For some reason this array allocation makes all the samples from a single
+      # node to the same value.. Allocating on the go is sloppy and slow, but gets the
+      # job done..... Sorry future me.
 
-      # Prepare array for file write
-      @collected.keys.each_with_index do | key, key_idx |
-        @collected[key].each_with_index do | sample, idx |
-          formatted[idx][key_idx] = sample
+      formatted = []
+
+      @collected.keys.each_with_index do | key, key_index |
+        @collected[key].each_with_index do | sample, index |
+          formatted[index] = [] unless formatted[index]
+          formatted[index][key_index] = sample
         end
       end
+
+      # Remove all indexes without the correct number of samples
+      formatted = formatted.reject{ | index | index.length < @collected.keys.length }
 
       # Write to file
       File.open(@name, 'w') do | file |
