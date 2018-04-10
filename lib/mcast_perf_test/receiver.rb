@@ -94,6 +94,7 @@ module McastPerfTest
 
       # Close connection
       connection.close
+      server.close
     end
 
   end # class
