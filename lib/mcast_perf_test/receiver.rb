@@ -85,8 +85,19 @@ module McastPerfTest
         idx,time = line.split(",")
         time = Time.at(time.to_f)
 
+        # The WiFi packet newer got here (LOSS)
         if time.to_i == 0
           connection.puts [idx,"0"].join(",")
+
+        # The ethernet packet never godt here (NO DATA)
+        elsif samples[idx.to_i].to_i == 0
+          next
+
+        # Ethernet was later than WiFi (NO DATA)
+        elsif time - samples[idx.to_i] < 0
+          next
+
+        # Ethernet first, then WiFi
         else
           connection.puts [idx,(time - samples[idx.to_i]).to_f.to_s].join(",")
         end
