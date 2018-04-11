@@ -12,12 +12,9 @@ module McastPerfTest
 
     bitrates.each do | bitrate |
       package_sizes.each do | size |
-        sender = Sender.new(
-          {bitrate: bitrate,
-           pkg_length: size,
-           wifi: wifi,
-           ethernet: ethernet,
-           time: time})
+        opt[:bitrate] = bitrate
+        opt[:packet_length] = size
+        sender = Sender.new(opt)
         sender.run
         collector = Collector.new(name + date_string, clients)
         collector.run
