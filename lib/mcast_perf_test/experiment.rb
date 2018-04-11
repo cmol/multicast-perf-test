@@ -5,9 +5,6 @@ module McastPerfTest
     clients       = opt[:clients]
     bitrates      = opt[:bitrates]
     package_sizes = opt[:packets]
-    wifi          = opt[:wifi]
-    ethernet      = opt[:ethernet]
-    time          = opt[:time]
     date_string   = Time.now.strftime "%Y%m%d_%H%m"
 
     bitrates.each do | bitrate |
