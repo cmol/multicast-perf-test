@@ -64,7 +64,8 @@ module McastPerfTest
       end
 
       if @verbose
-        bar = TTY::ProgressBar.new("Sending [:bar]", total: @send_time)
+        bar = TTY::ProgressBar.new("Sending [:bar] :eta", total: @send_time)
+        bar.resize
         @send_time.times do
           sleep(1)
           bar.advance(1)
