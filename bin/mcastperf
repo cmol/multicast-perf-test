@@ -30,6 +30,7 @@ if ARGV[0] == "sender"
     exit
   end
 
+  options[:bitrate] *= 1024
   send = McastPerfTest::Sender.new(options)
   send.run
 
