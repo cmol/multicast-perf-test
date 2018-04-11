@@ -32,9 +32,9 @@ module McastPerfTest
       # Prepare array dimensions
       #f2 = Array.new(@collected.first.last.length,
       #                      Array.new(@collected.keys.length, nil))
-      # TODO: For some reason this array allocation makes all the samples from a single
-      # node to the same value.. Allocating on the go is sloppy and slow, but gets the
-      # job done..... Sorry future me.
+      # TODO: For some reason this array allocation makes all the samples from
+      # a single node to the same value.. Allocating on the go is sloppy and
+      # slow, but gets the job done..... Sorry future me.
 
       formatted = []
 
@@ -46,7 +46,7 @@ module McastPerfTest
       end
 
       # Remove all indexes without the correct number of samples
-      formatted = formatted.reject{ | index | index.length < @collected.keys.length }
+      formatted = formatted.reject { | index | index.include?(nil) }
 
       # Write to file
       File.open(@name, 'w') do | file |
