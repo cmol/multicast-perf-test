@@ -13,7 +13,8 @@ module McastPerfTest
         opt[:packet_length] = size
         sender = Sender.new(opt)
         sender.run
-        collector = Collector.new(name + date_string, clients)
+        collector = Collector.new(
+          "#{name}_#{date_string}_b#{bitrate}_p#{size}.dat", clients)
         collector.run
 
         # Sleep to let possible congestion pass
