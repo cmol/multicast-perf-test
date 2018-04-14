@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "mcast_perf_test"
+require 'slop'
+
+options = {}
+
+opts = Slop::Options.new
+opts.banner = "usage: #{__FILE__} [options] ..."
+opts.string "-i", "--interface", "ethernet interface", required: true
+opts.string "-m", "--mode", "sender/receiver", required: true
+opts.int "-p", "--packet-length", "packet length in bytes (default 100)",
+  default: 100
+opts.int "-r", "--runs", "number of runs (default 100)", default: 100
+opts.bool "-v", "--verbose", "enable verbose mode", default: false
+opts.on "-h", "--help" do
+  puts opts
+  exit
+end
+
+begin
+  parser = Slop::Parser.new(opts)
+  options = parser.parse(ARGV).to_hash
+  options[:mode] = options[:mode] == "sender" ? :send : :recv
+rescue Slop::MissingRequiredOption
+  puts opts
+  exit
+end
+
+send = McastPerfTest::DelayTester.new(options)
+send.run
+

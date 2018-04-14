@@ -1,0 +1,67 @@
+require 'socket'
+require 'ipaddr'
+require 'tty-progressbar'
+
+module McastPerfTest
+  class DelayTester
+    include McastPerfTest::Helpers
+    include McastPerfTest::Constants
+
+    def initialize(options)
+      @opts = options
+    end
+
+    def run
+      # Set-up and prepare sockets
+      send_socket = UDPSocket.new(Socket::AF_INET6)
+      send_socket.setsockopt(Socket::IPPROTO_IPV6,
+                            Socket::IPV6_MULTICAST_HOPS, [1].pack('i'))
+      send_socket.setsockopt(
+        Socket::IPPROTO_IPV6,
+        Socket::IPV6_MULTICAST_IF,
+        [interface_idx(@opts[:interface])].pack('i')
+      )
+      recv_socket = UDPSocket.new(Socket::AF_INET6)
+      ip     = IPAddr.new(ETH_MULTICAST_ADDR).hton +
+                  [interface_idx(@opts[:interface])].pack('i')
+      recv_socket.setsockopt(Socket::IPPROTO_IPV6, Socket::IPV6_JOIN_GROUP, ip)
+      recv_socket.bind("::", ETH_PORT)
+
+      state = nil
+      add   = 0
+      if @opts[:mode] == :send
+        puts "send"
+        state = :send
+      else
+        state = :recv
+        add   = 1
+      end
+
+      send_time    = Time.at(0)
+      measurements = []
+      # Main loop
+      (@opts[:runs] + add).times do
+        if state == :send
+          msg = 0b10101010.to_s
+          send_socket.send(msg * @opts[:packet_length], 0, ETH_MULTICAST_ADDR,
+                           ETH_PORT)
+          send_time = Time.now
+          state = :recv
+        else
+          msg, info = recv_socket.recvfrom(1500)
+          current = Time.now
+          unless send_time.to_i == 0
+            measurements << current - send_time
+          end
+          state = :send
+        end
+      end
+
+      # What was the delay?
+      mid = measurements[sort][@opts[:runs] / 2]
+      puts mid.tv_sec + mid.tv_usec / 1_000_000
+
+    end
+
+  end # class
+end # module
