@@ -25,12 +25,11 @@ module McastPerfTest
       ip     = IPAddr.new(ETH_MULTICAST_ADDR).hton +
                   [interface_idx(@opts[:interface])].pack('i')
       recv_socket.setsockopt(Socket::IPPROTO_IPV6, Socket::IPV6_JOIN_GROUP, ip)
-      recv_socket.bind("::", ETH_PORT)
+      recv_socket.bind("::", ADM_PORT)
 
       state = nil
       add   = 0
       if @opts[:mode] == :send
-        puts "send"
         state = :send
       else
         state = :recv
@@ -44,7 +43,7 @@ module McastPerfTest
         if state == :send
           msg = 0b10101010.to_s
           send_socket.send(msg * @opts[:packet_length], 0, ETH_MULTICAST_ADDR,
-                           ETH_PORT)
+                           ADM_PORT)
           send_time = Time.now
           state = :recv
         else
@@ -58,8 +57,7 @@ module McastPerfTest
       end
 
       # What was the delay?
-      mid = measurements[sort][@opts[:runs] / 2]
-      puts (mid.tv_sec + mid.tv_usec / 1_000_000) / 2
+      puts measurements.sort[measurements.length / 2]
 
     end
 
