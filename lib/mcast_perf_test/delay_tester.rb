@@ -59,7 +59,7 @@ module McastPerfTest
 
       # What was the delay?
       mid = measurements[sort][@opts[:runs] / 2]
-      puts mid.tv_sec + mid.tv_usec / 1_000_000
+      puts (mid.tv_sec + mid.tv_usec / 1_000_000) / 2
 
     end
 
