@@ -13,13 +13,11 @@ module McastPerfTest
 
     def run
       state     = nil
-      add       = 0
       port_send = 7654
       port_recv = 4567
       state     = :send
       unless @opts[:mode] == :send
         state     = :recv
-        add       = 1
         port_send = 4567
         port_recv = 7654
       end
@@ -42,7 +40,7 @@ module McastPerfTest
       send_time    = Time.at(0)
       measurements = []
       # Main loop
-      (@opts[:runs] + add).times do
+      @opts[:runs].times do
         if state == :send
           msg = 0b10101010.to_s
           send_socket.send(msg * @opts[:packet_length], 0, ETH_MULTICAST_ADDR,
