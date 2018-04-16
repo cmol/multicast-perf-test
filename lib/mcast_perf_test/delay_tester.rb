@@ -7,6 +7,8 @@ module McastPerfTest
     include McastPerfTest::Helpers
     include McastPerfTest::Constants
 
+    HEADER_SIZE = 62
+
     def initialize(options)
       @opts = options
     end
@@ -43,8 +45,8 @@ module McastPerfTest
       @opts[:runs].times do
         if state == :send
           msg = 0b10101010.chr
-          send_socket.send(msg * @opts[:packet_length], 0, ETH_MULTICAST_ADDR,
-                           port_send)
+          send_socket.send(msg * (@opts[:packet_length] - HEADER_SIZE),
+                           0, ETH_MULTICAST_ADDR, port_send)
           send_time = Time.now
           state = :recv
         else
