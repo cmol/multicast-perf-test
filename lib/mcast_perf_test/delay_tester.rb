@@ -12,6 +12,18 @@ module McastPerfTest
     end
 
     def run
+      state     = nil
+      add       = 0
+      port_send = 7654
+      port_recv = 4567
+      state     = :send
+      unless @opts[:mode] == :send
+        state     = :recv
+        add       = 1
+        port_send = 4567
+        port_recv = 7654
+      end
+
       # Set-up and prepare sockets
       send_socket = UDPSocket.new(Socket::AF_INET6)
       send_socket.setsockopt(Socket::IPPROTO_IPV6,
@@ -25,16 +37,7 @@ module McastPerfTest
       ip     = IPAddr.new(ETH_MULTICAST_ADDR).hton +
                   [interface_idx(@opts[:interface])].pack('i')
       recv_socket.setsockopt(Socket::IPPROTO_IPV6, Socket::IPV6_JOIN_GROUP, ip)
-      recv_socket.bind("::", ADM_PORT)
-
-      state = nil
-      add   = 0
-      if @opts[:mode] == :send
-        state = :send
-      else
-        state = :recv
-        add   = 1
-      end
+      recv_socket.bind("::", port_recv)
 
       send_time    = Time.at(0)
       measurements = []
@@ -43,7 +46,7 @@ module McastPerfTest
         if state == :send
           msg = 0b10101010.to_s
           send_socket.send(msg * @opts[:packet_length], 0, ETH_MULTICAST_ADDR,
-                           ADM_PORT)
+                           port_send)
           send_time = Time.now
           state = :recv
         else
