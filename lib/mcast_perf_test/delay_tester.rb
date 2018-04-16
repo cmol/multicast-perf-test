@@ -42,7 +42,7 @@ module McastPerfTest
       # Main loop
       @opts[:runs].times do
         if state == :send
-          msg = 0b10101010.to_s
+          msg = 0b10101010.chr
           send_socket.send(msg * @opts[:packet_length], 0, ETH_MULTICAST_ADDR,
                            port_send)
           send_time = Time.now
