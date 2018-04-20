@@ -1,6 +1,5 @@
 require 'socket'
 require 'ipaddr'
-require 'tty-progressbar'
 
 module McastPerfTest
   class DelayTester
