@@ -14,7 +14,8 @@ module McastPerfTest
         sender = Sender.new(opt)
         sender.run
         collector = Collector.new(
-          "#{name}_#{date_string}_b#{bitrate}_p#{size}.dat", clients)
+          "#{name}_#{date_string}_b#{bitrate.rjust(bitrates.length,"0")}\
+          _p#{size.rjust(package_sizes,"0")}.dat", clients)
         collector.run
 
         # Sleep to let possible congestion pass
