@@ -1,3 +1,4 @@
+require 'tty-progressbar'
 module McastPerfTest
   def self.experiment(opt)
     # Pickup config for experiment
@@ -15,12 +16,18 @@ module McastPerfTest
         sender.run
         collector = Collector.new(
           "#{name}_#{date_string}\
-          _b#{bitrate.to_s.rjust(bitrates.max.length,"0")}\
-          _p#{size.to_s.rjust(package_sizes.max.length,"0")}.dat", clients)
+          _b#{bitrate.to_s.rjust(bitrates.max.to_s.length,"0")}\
+          _p#{size.to_s.rjust(package_sizes.max.to_s.length,"0")}\
+          .dat", clients)
         collector.run
 
         # Sleep to let possible congestion pass
-        sleep(10)
+        bar = TTY::ProgressBar.new("Sleeping [:bar] :percent", total: 10)
+        bar.resize
+        10.times do
+          sleep(1)
+          bar.advance(1)
+        end
       end
     end
   end
