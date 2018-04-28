@@ -7,7 +7,7 @@ module McastPerfTest
     bitrates      = opt[:bitrates]
     package_sizes = opt[:packets]
     date_string   = Time.now.strftime "%Y%m%d_%H%m"
-    total         = bitrates.length * package_sizes.length
+    total         = bitrates.length * package_sizes.length * opt[:time]
     bar           = TTY::ProgressBar.new("Working [:bar] :percent :eta",
                                          total: total)
 
