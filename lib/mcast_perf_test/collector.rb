@@ -46,7 +46,9 @@ module McastPerfTest
       end
 
       # Remove all indexes without the correct number of samples
-      formatted = formatted.reject { | index | index.include?(nil) }
+      formatted.reject! do | index |
+        index.include?(nil) || index.length < @collected.keys + 1
+      end
 
       # Write to file
       File.open(@name, 'w') do | file |
