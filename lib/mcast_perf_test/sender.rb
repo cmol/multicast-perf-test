@@ -19,6 +19,8 @@ module McastPerfTest
       @wifi       = options[:wifi]
       @ethernet   = options[:ethernet]
       @verbose    = options[:verbose]
+      @bar        = options[:bar] ||
+             TTY::ProgressBar.new("Sending [:bar] :percent", total: @send_time)
     end
 
     def send_pocess(multicast_addr, interface, port, start_time)
@@ -64,11 +66,10 @@ module McastPerfTest
       end
 
       if @verbose
-        bar = TTY::ProgressBar.new("Sending [:bar] :percent", total: @send_time)
-        bar.resize
+        @bar.resize
         @send_time.times do
           sleep(1)
-          bar.advance(1)
+          @bar.advance(1)
         end
       end
 
