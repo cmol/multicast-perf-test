@@ -24,6 +24,7 @@ module McastPerfTest
 _b#{bitrate.to_s.rjust(bitrates.max.to_s.length,"0")}\
 _p#{size.to_s.rjust(package_sizes.max.to_s.length,"0")}\
 .dat", clients)
+        sleep(1)
         bar.log("Collecting for for bitrate #{bitrate} and pkg size #{size}")
         collector.run
 
