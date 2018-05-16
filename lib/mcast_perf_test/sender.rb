@@ -11,15 +11,16 @@ module McastPerfTest
       # Find sending interval and number of sends
       #interval    = 1.0 /
       #              (options[:bitrate].to_f / (options[:pkg_length].to_f * 8)
-      @send_time  = options[:time]
-      interval    = (options[:packet_length] * 8).to_f / options[:bitrate].to_f
-      @pkg_length = options[:packet_length] / 4
-      @sends      = (0..(@send_time+interval)).step(interval).to_a
+      @send_time   = options[:time]
+      interval     = (options[:packet_length] * 8).to_f / options[:bitrate].to_f
+      @pkg_length  = options[:packet_length] / 4
+      @sends       = (0..(@send_time+interval)).step(interval).to_a
       @sends.shift
-      @wifi       = options[:wifi]
-      @ethernet   = options[:ethernet]
-      @verbose    = options[:verbose]
-      @bar        = options[:bar] ||
+      @wifi        = options[:wifi]
+      @ethernet    = options[:ethernet]
+      @verbose     = options[:verbose]
+      @destination = options[:destination]
+      @bar         = options[:bar] ||
              TTY::ProgressBar.new("Sending [:bar] :percent", total: @send_time)
     end
 
@@ -53,6 +54,32 @@ module McastPerfTest
       end
     end
 
+    def send_unicast_process(destinations, iface, port, start_time)
+      # Open sockets to all destinations
+      sockets = destinations.map do | destination |
+        socket = UDPSocket.new(Socket::AF_INET6)
+        socket.connect(destination, port)
+        socket
+      end
+
+      @sends.each_with_index do | time,idx |
+        # Calculate sleep time, and skip if we are late
+        sleep_time = (start_time + time) - Time.now
+        if sleep_time < 0
+          next
+        else
+          sleep(sleep_time)
+        end
+
+        # Make the index into a 32-bit unsigned int, network byte order
+        msg = [idx].pack("I>") * @pkg_length
+        sockets.each do | socket |
+          socket.send(msg, 0)
+        end
+      end
+
+    end
+
     def run
       # Set start time and let processes start
       start_time = Time.now + STARTUP_DELAY
@@ -62,7 +89,8 @@ module McastPerfTest
         send_pocess(ETH_MULTICAST_ADDR, @ethernet, ETH_PORT, start_time)
       end
       pid_wifi = fork do
-        send_pocess(WIFI_MULTICAST_ADDR, @wifi, WIFI_PORT, start_time)
+        send_pocess(@destinations || WIFI_MULTICAST_ADDR, @wifi, WIFI_PORT,
+                    start_time)
       end
 
       if @verbose
