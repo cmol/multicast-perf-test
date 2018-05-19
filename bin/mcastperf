@@ -101,6 +101,9 @@ elsif ARGV[0] == "experiment"
   opts.string "-w", "--wifi", "ethernet interface", required: true
   opts.string "-n", "--name", "name of experiment", required: true
   opts.array "-c", "--clients", "list of client as fd00::1,...", required: true
+  opts.array "-s", "--stas",
+    "list of STAs as fd00:1::1,... Only used for unicast mode (default nil)",
+    default: nil
   opts.array "-b", "--bitrates",
     "bitrates for experiment in kbps as (start,stop,step)", required: true
   opts.array "-p", "--packets",
