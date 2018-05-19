@@ -19,7 +19,7 @@ module McastPerfTest
       @wifi        = options[:wifi]
       @ethernet    = options[:ethernet]
       @verbose     = options[:verbose]
-      @clients     = options[:clients]
+      @stas     = options[:stas]
       @bar         = options[:bar] ||
              TTY::ProgressBar.new("Sending [:bar] :percent", total: @send_time)
     end
@@ -54,15 +54,15 @@ module McastPerfTest
       end
     end
 
-    def send_unicast_process(clients, iface, port, start_time)
+    def send_unicast_process(stas, iface, port, start_time)
       # Open sockets to all destinations
-      sockets = clients.map do | client |
+      sockets = stas.map do | sta |
         socket = UDPSocket.new(Socket::AF_INET6)
-        socket.connect(client, port)
+        socket.connect(sta, port)
         socket
       end
 
-      @bar.log("Sending unicast to #{clients.join(", ")}")
+      @bar.log("Sending unicast to #{stas.join(", ")}")
 
       @sends.each_with_index do | time,idx |
         # Calculate sleep time, and skip if we are late
@@ -91,8 +91,8 @@ module McastPerfTest
         send_pocess(ETH_MULTICAST_ADDR, @ethernet, ETH_PORT, start_time)
       end
       pid_wifi = fork do
-        if @clients
-          send_unicast_process(@clients, @wifi, WIFI_PORT, start_time)
+        if @stas
+          send_unicast_process(@stas, @wifi, WIFI_PORT, start_time)
         else
           send_pocess(WIFI_MULTICAST_ADDR, @wifi, WIFI_PORT, start_time)
         end
