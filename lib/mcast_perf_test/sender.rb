@@ -90,7 +90,7 @@ module McastPerfTest
       end
       pid_wifi = fork do
         if @clients
-          send_unicast_pocess(@clients, @wifi, WIFI_PORT, start_time)
+          send_unicast_process(@clients, @wifi, WIFI_PORT, start_time)
         else
           send_pocess(WIFI_MULTICAST_ADDR, @wifi, WIFI_PORT, start_time)
         end
