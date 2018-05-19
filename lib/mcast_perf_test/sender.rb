@@ -62,6 +62,8 @@ module McastPerfTest
         socket
       end
 
+      @bar.log("Sending unicast to #{clients.join(", ")}")
+
       @sends.each_with_index do | time,idx |
         # Calculate sleep time, and skip if we are late
         sleep_time = (start_time + time) - Time.now
