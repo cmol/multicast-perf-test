@@ -33,7 +33,6 @@ void DumpHex(const void* data, size_t size) {
 int main(int argc, char *argv[])
 {
   pcap_t *handle;     /* Session handle */
-  char *dev;      /* The device to sniff on */
   char errbuf[PCAP_ERRBUF_SIZE];  /* Error string */
   struct bpf_program fp;    /* The compiled filter */
   //char filter_exp[] = "port 22";  /* The filter expression */
@@ -44,11 +43,13 @@ int main(int argc, char *argv[])
   const u_char *packet;   /* The actual packet */
 
   /* Define the device */
-  dev = pcap_lookupdev(errbuf);
-  if (dev == NULL) {
-    fprintf(stderr, "Couldn't find default device: %s\n", errbuf);
-    return(2);
+  if(argc < 2) {
+    printf("Usage: %s [device]\n", argv[0]);
+    return 1;
   }
+  char *dev = argv[1];
+  printf("Device: %s\n", dev);
+
   /* Find the properties for the device */
   if (pcap_lookupnet(dev, &net, &mask, errbuf) == -1) {
     fprintf(stderr, "Couldn't get netmask for device %s: %s\n", dev, errbuf);
