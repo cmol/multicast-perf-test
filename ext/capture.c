@@ -1,6 +1,17 @@
 #include <pcap.h>
 #include <stdio.h>
 
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <string.h>
+#define PORT 0xbeee
+#define SERVADDR "::1"
+
 void DumpHex(const void* data, size_t size) {
   char ascii[17];
   size_t i, j;
@@ -42,6 +53,36 @@ int main(int argc, char *argv[])
   struct pcap_pkthdr header;  /* The header that pcap gives us */
   const u_char *packet;   /* The actual packet */
 
+  /* Socket definitions */
+  int sock;
+  socklen_t clilen;
+  struct sockaddr_in6 server_addr, client_addr;
+  char buffer[1024];
+  char addrbuf[INET6_ADDRSTRLEN];
+
+  /* create a DGRAM (UDP) socket in the INET6 (IPv6) protocol */
+  sock = socket(PF_INET6, SOCK_DGRAM, 0);
+
+  if (sock < 0) {
+    perror("creating socket");
+    exit(1);
+  }
+
+  /* create server address: where we want to send to */
+
+  /* clear it out */
+  memset(&server_addr, 0, sizeof(server_addr));
+
+  /* it is an INET address */
+  server_addr.sin6_family = AF_INET6;
+
+  /* the server IP address, in network byte order */
+  inet_pton(AF_INET6, SERVADDR, &server_addr.sin6_addr);
+
+  /* the port we are going to send to, in network byte order */
+  server_addr.sin6_port = htons(PORT);
+
+
   /* Define the device */
   if(argc < 2) {
     printf("Usage: %s [device]\n", argv[0]);
@@ -76,7 +117,16 @@ int main(int argc, char *argv[])
     packet = pcap_next(handle, &header);
     /* Print its length */
     printf("Jacked a packet with length of [%d]\n", header.len);
-    DumpHex(packet, header.len);
+    DumpHex(&packet[62], header.len - 62);
+
+    /* now send a datagram */
+    if (sendto(sock, &packet[62], header.len - 62, 0,
+               (struct sockaddr *)&server_addr,
+         sizeof(server_addr)) < 0) {
+        perror("sendto failed");
+        exit(4);
+    }
+
   }
   /* And close the session */
   pcap_close(handle);
