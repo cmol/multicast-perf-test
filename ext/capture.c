@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
   char errbuf[PCAP_ERRBUF_SIZE];  /* Error string */
   struct bpf_program fp;    /* The compiled filter */
   //char filter_exp[] = "port 22";  /* The filter expression */
-  char filter_exp[] = "dst host fd00:1::101 and udp port 48877";  /* The filter expression */
+  char filter_exp[] = "dst host fd00:1::101 and udp port 48878";  /* The filter expression */
   bpf_u_int32 mask;   /* Our netmask */
   bpf_u_int32 net;    /* Our IP */
   struct pcap_pkthdr header;  /* The header that pcap gives us */
