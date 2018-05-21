@@ -51,3 +51,4 @@ Gemfile.lock
 
 # Specific here
 legacy-testing/*
+ext/capture
