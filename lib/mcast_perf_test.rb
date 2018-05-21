@@ -8,7 +8,7 @@ module McastPerfTest
     WIFI_SOURCE_ADDR    = "fd01::1"
     ADM_PORT            = 5000
     ETH_PORT            = 5001
-    WIFI_PORT           = 0xbeef
+    WIFI_PORT           = 0xbeee
     ETH_FILE            = "/tmp/eth_samples"
     WIFI_FILE           = "/tmp/wifi_samples"
     STARTUP_DELAY       = 1.0                 # Defined in seconds
