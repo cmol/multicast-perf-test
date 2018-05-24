@@ -130,7 +130,7 @@ elsif ARGV[0] == "experiment"
   options[:packets] = (start..stop).step(step).to_a
 
   # Make check for STAs easier
-  options[:stas].length = nil if options[:stas].length == 0
+  options[:stas] = nil if options[:stas].length == 0
 
   McastPerfTest.experiment(options)
 else
