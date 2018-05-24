@@ -129,6 +129,9 @@ elsif ARGV[0] == "experiment"
   start,stop,step = options[:packets].map!{|p| p.to_i}
   options[:packets] = (start..stop).step(step).to_a
 
+  # Make check for STAs easier
+  options[:stas].length = nil if options[:stas].length == 0
+
   McastPerfTest.experiment(options)
 else
   puts send_parser
