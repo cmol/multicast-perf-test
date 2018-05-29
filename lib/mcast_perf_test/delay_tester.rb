@@ -59,7 +59,9 @@ module McastPerfTest
       end
 
       # What was the delay?
-      puts measurements.sort[measurements.length / 2]
+      #puts measurements.sort[measurements.length / 2]
+      puts measurements.sort.first
+      puts measurements.sort.last
 
     end
 
